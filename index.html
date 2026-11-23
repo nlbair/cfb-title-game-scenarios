@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--accent:#2b5cff;--tint:#eef2ff;--ink:#111;--mute:#8d8d8d;--faint:#bdbdbd;--line:#ececec;--bar:#d4d4d4;--track:#f4f4f4;--bg:#fff}
+:root{--accent:#2b5cff;--tint:#eef2ff;--left:#2b5cff;--right:#ff7a1a;--tint-r:#fff3ea;--ink:#111;--mute:#8d8d8d;--faint:#bdbdbd;--line:#ececec;--bar:#d4d4d4;--track:#f4f4f4;--bg:#fff}
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.4;padding:0 16px 80px}
@@ -67,7 +67,10 @@ section{margin-top:40px}
 .wp i{display:block;height:100%}
 .wp .a{background:#e6e6e6}
 .wp .h{background:var(--bar)}
-.wp .a.f,.wp .h.f{background:var(--accent)}
+.wp .a.f{background:var(--left)}
+.wp .h.f{background:var(--right)}
+.tm.away.win{border-color:var(--left);background:var(--tint)}
+.tm.home.win{border-color:var(--right);background:var(--tint-r)}
 .wplab{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin:4px 10px 0}
 .brow{display:grid;grid-template-columns:30px 1fr 74px;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
 .brow .lg{width:30px;height:30px;object-fit:contain}
@@ -150,7 +153,7 @@ function decided() {
   return state.sim || state.picks;
 }
 
-function liveStandings(conf, dec) {
+function liveStandings(conf, dec, fin) {
   const C = APP.conferences[conf];
   const rows = C.standings.map((r, k) => Object.assign({}, r, {ord: k}));
   const by = {};
@@ -166,7 +169,8 @@ function liveStandings(conf, dec) {
     r.cp = r.conf_w + r.conf_l ? r.conf_w / (r.conf_w + r.conf_l) : 0;
     r.op = r.w + r.l ? r.w / (r.w + r.l) : 0;
   });
-  rows.sort((a, b) => (b.cp - a.cp) || (b.conf_w - a.conf_w) || (a.ord - b.ord));
+  const fi = id => { const k = (fin || []).indexOf(id); return k < 0 ? 9 : k; };
+  rows.sort((a, b) => (b.cp - a.cp) || (b.conf_w - a.conf_w) || (fi(a.team_id) - fi(b.team_id)) || (a.ord - b.ord));
   return rows;
 }
 
@@ -240,8 +244,8 @@ function render() {
   const conf = state.conf, C = APP.conferences[conf];
   const dec = decided();
   const games = gamesOf(conf);
-  const rows = liveStandings(conf, dec);
   const res = titleResult(conf, dec);
+  const rows = liveStandings(conf, dec, res.ids);
   const [s1, s2] = res.ids;
   const picksN = Object.keys(state.picks).length;
   const mode = state.sim ? "One simulation" : picksN ? "Your picks (" + picksN + ")" : "As it stands";
