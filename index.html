@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--accent:#00c27a;--ink:#111;--mute:#8d8d8d;--faint:#bdbdbd;--line:#ececec;--bar:#d4d4d4;--track:#f4f4f4;--bg:#fff}
+:root{--accent:#2b5cff;--tint:#eef2ff;--ink:#111;--mute:#8d8d8d;--faint:#bdbdbd;--line:#ececec;--bar:#d4d4d4;--track:#f4f4f4;--bg:#fff}
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.4;padding:0 16px 80px}
@@ -26,6 +26,7 @@ h1 span{color:var(--accent)}
 section{margin-top:40px}
 .fade{opacity:0;transform:translateY(10px);animation:fadeUp .5s ease forwards;animation-delay:calc(var(--i,0)*70ms)}
 @keyframes fadeUp{to{opacity:1;transform:none}}
+.noanim .fade{opacity:1;transform:none;animation:none}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .chip{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:99px;background:var(--track);color:var(--mute)}
 .chip.live{background:var(--accent);color:#fff}
@@ -37,9 +38,9 @@ section{margin-top:40px}
 .side .meta{font-size:12px;color:var(--mute);letter-spacing:.04em}
 .side .seedtag{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .vs{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--faint)}
-.where{text-align:center;color:var(--ink);font-weight:500}
+.where{min-height:21px;text-align:center;color:var(--ink);font-weight:500}
 .espn{text-align:center;color:var(--mute);font-size:13px;margin-top:4px}
-.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.tags{min-height:30px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:22px 0 4px}
 .btn{font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);background:#fff;color:var(--ink);padding:11px 18px;border-radius:99px;cursor:pointer;transition:.15s}
 .btn:hover{background:var(--ink);color:#fff}
@@ -59,7 +60,7 @@ section{margin-top:40px}
 .tm .rk{font-family:'Bebas Neue',sans-serif;color:var(--faint);font-size:17px;margin-right:4px}
 .tm.home .rk{margin-right:0;margin-left:4px}
 .tm .rec{display:block;font-size:11px;color:var(--mute);font-weight:400}
-.tm.win{border-color:var(--accent);background:#effaf5}
+.tm.win{border-color:var(--accent);background:var(--tint)}
 .tm.lose{opacity:.42}
 .at{text-align:center;color:var(--faint);font-weight:700;font-size:13px}
 .wp{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--track);margin:8px 10px 0}
@@ -92,7 +93,7 @@ td.rank{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--faint);wi
 .tcell{display:flex;align-items:center;gap:10px;min-width:0}
 .tcell img{width:26px;height:26px;object-fit:contain;flex:none}
 .tcell b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-tr.fin td{background:#effaf5}
+tr.fin td{background:var(--tint)}
 tr.fin td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 .sm{font-size:11px;color:var(--mute)}
 .num{font-variant-numeric:tabular-nums}
@@ -115,7 +116,8 @@ tr.fin td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
 <script>
 const pow3 = [1,3,9,27,81,243,729,2187,6561,19683,59049];
 let APP = null, LOOK = null;
-const state = {conf: null, picks: {}, sim: null, keep: false};
+const state = {conf: null, picks: {}, sim: null, keep: false, animate: true};
+const BASE = {};
 
 const $ = (s, el) => (el || document).querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -150,7 +152,7 @@ function decided() {
 
 function liveStandings(conf, dec) {
   const C = APP.conferences[conf];
-  const rows = C.standings.map(r => Object.assign({}, r));
+  const rows = C.standings.map((r, k) => Object.assign({}, r, {ord: k}));
   const by = {};
   rows.forEach(r => by[r.team_id] = r);
   gamesOf(conf).forEach((g, i) => {
@@ -164,7 +166,7 @@ function liveStandings(conf, dec) {
     r.cp = r.conf_w + r.conf_l ? r.conf_w / (r.conf_w + r.conf_l) : 0;
     r.op = r.w + r.l ? r.w / (r.w + r.l) : 0;
   });
-  rows.sort((a, b) => (b.cp - a.cp) || (b.conf_w - a.conf_w) || (b.op - a.op) || ((a.cfp_rank || 999) - (b.cfp_rank || 999)));
+  rows.sort((a, b) => (b.cp - a.cp) || (b.conf_w - a.conf_w) || (a.ord - b.ord));
   return rows;
 }
 
@@ -234,6 +236,7 @@ function renderTabs() {
 }
 
 function render() {
+  const sy = window.scrollY;
   const conf = state.conf, C = APP.conferences[conf];
   const dec = decided();
   const games = gamesOf(conf);
@@ -310,25 +313,27 @@ function render() {
 
   const odds = computeOdds(conf, state.picks);
   const L = LOOK[conf];
-  const teamRows = L.teams.map((id, k) => ({id, p: odds.appear[k]})).filter(x => x.p > 0.0005).sort((a, b) => b.p - a.p);
+  if (!BASE[conf]) BASE[conf] = computeOdds(conf, {});
+  const bo = BASE[conf];
+  const teamRows = L.teams.map((id, k) => ({id, p: odds.appear[k], b: bo.appear[k]})).filter(x => x.b > 0.0005).sort((a, b) => b.b - a.b);
   const lab = Object.keys(state.picks).length ? "Given your picks" : "Before any picks";
   h += `<div class="two"><section class="fade" ${idx()}>
     <div class="sec-head"><div class="label">Chance to make the title game</div><span class="chip">${lab}</span></div>
     <div class="cap">From ESPN FPI game probabilities across every way the remaining games can end.</div>`;
   teamRows.slice(0, 10).forEach(x => {
-    h += `<div class="brow">${logo(x.id, "lg")}<div><div class="nm"><span>${esc(T(x.id).name)}</span></div><div class="trk"><i class="${finalSet.has(x.id) ? "f" : ""}" style="width:${Math.max(x.p * 100, 1)}%"></i></div></div><div class="big">${pctText(x.p)}</div></div>`;
+    h += `<div class="brow" style="${x.p < 0.0005 ? "opacity:.4" : ""}">${logo(x.id, "lg")}<div><div class="nm"><span>${esc(T(x.id).name)}</span></div><div class="trk"><i class="${finalSet.has(x.id) ? "f" : ""}" style="width:${Math.max(x.p * 100, 1)}%"></i></div></div><div class="big">${pctText(x.p)}</div></div>`;
   });
   h += `</section>`;
 
-  const pairRows = Object.keys(odds.pairs).map(k => { const [a, b] = k.split("_").map(Number); return {a: L.teams[a], b: L.teams[b], p: odds.pairs[k]}; })
-    .filter(x => x.p > 0.0005).sort((x, y) => y.p - x.p);
+  const pairRows = Object.keys(bo.pairs).map(k => { const [a, b] = k.split("_").map(Number); return {a: L.teams[a], b: L.teams[b], p: odds.pairs[k] || 0, b0: bo.pairs[k]}; })
+    .filter(x => x.b0 > 0.0005).sort((x, y) => y.b0 - x.b0);
   h += `<section class="fade" ${idx()}>
     <div class="sec-head"><div class="label">Most likely matchups</div><span class="chip">${lab}</span></div>
     <div class="cap">${home ? "The higher seed hosts." : "Seed 1 is listed first."}</div>`;
   pairRows.slice(0, 10).forEach(x => {
     const cur = s1 === x.a && s2 === x.b;
     const text = home ? `${esc(T(x.b).name)} @ ${esc(T(x.a).name)}` : `${esc(T(x.a).name)} vs ${esc(T(x.b).name)}`;
-    h += `<div class="mrow"><div class="lgs">${logo(x.a)}${logo(x.b)}</div><div><div class="nm">${text}</div><div class="trk"><i class="${cur ? "f" : ""}" style="width:${Math.max(x.p * 100, 1)}%"></i></div></div><div class="big">${pctText(x.p)}</div></div>`;
+    h += `<div class="mrow" style="${x.p < 0.0005 ? "opacity:.4" : ""}"><div class="lgs">${logo(x.a)}${logo(x.b)}</div><div><div class="nm">${text}</div><div class="trk"><i class="${cur ? "f" : ""}" style="width:${Math.max(x.p * 100, 1)}%"></i></div></div><div class="big">${pctText(x.p)}</div></div>`;
   });
   h += `</section></div>`;
 
@@ -344,11 +349,12 @@ function render() {
   });
   h += `</tbody></table></section>`;
 
-  h += `<section class="fade" ${idx()}><div class="notes"><div class="label">About this page</div>
-    ${C.notes.map(n => `<p>${esc(n)}</p>`).join("")}
-    <p>Records include games through the last update (${esc(APP.meta.generated_et)} ET). Win probabilities are ESPN FPI. CFP ranks are from the latest committee release the page has. Picked and simulated games use placeholder scores, which only matter in rare scoring-based tiebreakers.</p></div></section>`;
 
-  $("#main").innerHTML = h;
+  const main = $("#main");
+  main.classList.toggle("noanim", !state.animate);
+  main.innerHTML = h;
+  state.animate = false;
+  window.scrollTo(0, sy);
 }
 
 function pick(gi, side) {
@@ -372,7 +378,7 @@ function simulate() {
 
 document.addEventListener("click", e => {
   const tab = e.target.closest(".tab");
-  if (tab) { state.conf = tab.dataset.conf; state.picks = {}; state.sim = null; renderTabs(); render(); window.scrollTo({top: 0}); return; }
+  if (tab) { state.animate = true; state.conf = tab.dataset.conf; state.picks = {}; state.sim = null; renderTabs(); render(); window.scrollTo({top: 0}); return; }
   const tm = e.target.closest(".tm");
   if (tm) { pick(Number(tm.dataset.g), tm.dataset.side); return; }
   if (e.target.id === "simBtn") { simulate(); return; }
