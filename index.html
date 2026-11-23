@@ -247,7 +247,7 @@ function render() {
   const mode = state.sim ? "One simulation" : picksN ? "Your picks (" + picksN + ")" : "As it stands";
   const decN = Object.keys(dec).length;
   const anyLeft = games.length > decN;
-  const recOf = id => { const r = rows.find(x => x.team_id === id); return r ? `${r.conf_w}-${r.conf_l} conf · ${r.w}-${r.l}` + (r.cfp_rank ? ` · CFP #${r.cfp_rank}` : "") : ""; };
+  const recOf = id => { const r = rows.find(x => x.team_id === id); return r ? `${r.conf_w}-${r.conf_l} conf · ${r.w}-${r.l}` + (r.ap_rank ? ` · AP #${r.ap_rank}` : "") : ""; };
   const finalSet = new Set(res.ids.filter(Boolean));
 
   let i = 0;
@@ -295,8 +295,8 @@ function render() {
       const homeCls = d === "h" ? "win" : d === "a" ? "lose" : "";
       const rkA = T(g.away_id) && rows.find(r => r.team_id === g.away_id);
       const rkH = rows.find(r => r.team_id === g.home_id);
-      const cfpA = rkA && rkA.cfp_rank ? `<span class="rk">${rkA.cfp_rank}</span>` : "";
-      const cfpH = rkH && rkH.cfp_rank ? `<span class="rk">${rkH.cfp_rank}</span>` : "";
+      const cfpA = rkA && rkA.ap_rank ? `<span class="rk">${rkA.ap_rank}</span>` : "";
+      const cfpH = rkH && rkH.ap_rank ? `<span class="rk">${rkH.ap_rank}</span>` : "";
       const ap = Math.round((1 - g.home_wp) * 100), hp = 100 - ap;
       h += `<div class="game">
         <div class="grow">
@@ -339,12 +339,12 @@ function render() {
 
   const isSB = conf === "Sun Belt Conference";
   h += `<section class="fade" ${idx()}><div class="sec-head"><div class="label">Standings</div><span class="chip ${state.sim || picksN ? "live" : ""}">${esc(mode)}</span></div>
-    <table><thead><tr><th>#</th><th>Team</th>${isSB ? '<th class="hide-s">Div</th>' : ""}<th class="r">CFP</th><th class="r">Conf</th><th class="r">Overall</th></tr></thead><tbody>`;
+    <table><thead><tr><th>#</th><th>Team</th>${isSB ? '<th class="hide-s">Div</th>' : ""}<th class="r">AP</th><th class="r">Conf</th><th class="r">Overall</th></tr></thead><tbody>`;
   rows.forEach((r, k) => {
     h += `<tr class="${finalSet.has(r.team_id) ? "fin" : ""}"><td class="rank">${k + 1}</td>
       <td><div class="tcell">${logo(r.team_id)}<b>${esc(T(r.team_id).name)}</b>${r.eligible ? "" : '<span class="sm">ineligible</span>'}</div></td>
       ${isSB ? `<td class="hide-s sm">${esc(r.division || "")}</td>` : ""}
-      <td class="r num">${r.cfp_rank ? "#" + r.cfp_rank : '<span class="sm">–</span>'}</td>
+      <td class="r num">${r.ap_rank ? "#" + r.ap_rank : '<span class="sm">–</span>'}</td>
       <td class="r num"><b>${r.conf_w}-${r.conf_l}</b></td><td class="r num">${r.w}-${r.l}</td></tr>`;
   });
   h += `</tbody></table></section>`;
