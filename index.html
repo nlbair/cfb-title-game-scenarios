@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conference Championship Picture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#00c27a;--ink:#111;--mute:#8d8d8d;--faint:#bdbdbd;--line:#ececec;--bar:#d4d4d4;--track:#f4f4f4;--bg:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.4;padding:0 16px 80px}
+.wrap{max-width:980px;margin:0 auto}
+header{padding:36px 0 14px}
+.kicker,.label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(40px,8vw,76px);line-height:.95;letter-spacing:.01em;margin-top:6px}
+h1 span{color:var(--accent)}
+.sub{color:var(--mute);margin-top:10px;max-width:640px}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding:18px 0 0;margin:0 -16px;padding-left:16px;padding-right:16px;border-bottom:1px solid var(--line);scrollbar-width:none;position:sticky;top:0;background:var(--bg);z-index:5}
+.tabs::-webkit-scrollbar{display:none}
+.tab{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;background:none;border:0;color:var(--faint);padding:6px 14px 12px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent)}
+section{margin-top:40px}
+.fade{opacity:0;transform:translateY(10px);animation:fadeUp .5s ease forwards;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.chip{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:99px;background:var(--track);color:var(--mute)}
+.chip.live{background:var(--accent);color:#fff}
+.title-card{border-top:2px solid var(--ink);padding-top:18px}
+.matchup{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center;margin:22px 0 12px}
+.side{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;min-width:0}
+.side img{width:min(120px,26vw);height:min(120px,26vw);object-fit:contain}
+.side .nm{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,4.2vw,36px);line-height:1;overflow-wrap:anywhere}
+.side .meta{font-size:12px;color:var(--mute);letter-spacing:.04em}
+.side .seedtag{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.vs{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--faint)}
+.where{text-align:center;color:var(--ink);font-weight:500}
+.espn{text-align:center;color:var(--mute);font-size:13px;margin-top:4px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:22px 0 4px}
+.btn{font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);background:#fff;color:var(--ink);padding:11px 18px;border-radius:99px;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--ink);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(.92);background:var(--accent)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.keep{display:flex;gap:7px;align-items:center;font-size:13px;color:var(--mute);cursor:pointer;user-select:none}
+.keep input{accent-color:var(--accent);width:16px;height:16px}
+.gdate{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:22px 0 6px}
+.game{border-top:1px solid var(--line);padding:12px 0}
+.grow{display:grid;grid-template-columns:1fr 28px 1fr;align-items:center;gap:6px}
+.tm{display:flex;align-items:center;gap:10px;background:none;border:1.5px solid transparent;border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;font:inherit;color:inherit;min-width:0;transition:.12s}
+.tm:hover{border-color:var(--line);background:#fafafa}
+.tm img{width:34px;height:34px;object-fit:contain;flex:none}
+.tm.home{flex-direction:row-reverse;text-align:right}
+.tm .tn{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm .rk{font-family:'Bebas Neue',sans-serif;color:var(--faint);font-size:17px;margin-right:4px}
+.tm.home .rk{margin-right:0;margin-left:4px}
+.tm .rec{display:block;font-size:11px;color:var(--mute);font-weight:400}
+.tm.win{border-color:var(--accent);background:#effaf5}
+.tm.lose{opacity:.42}
+.at{text-align:center;color:var(--faint);font-weight:700;font-size:13px}
+.wp{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--track);margin:8px 10px 0}
+.wp i{display:block;height:100%}
+.wp .a{background:#e6e6e6}
+.wp .h{background:var(--bar)}
+.wp .a.f,.wp .h.f{background:var(--accent)}
+.wplab{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);margin:4px 10px 0}
+.brow{display:grid;grid-template-columns:30px 1fr 74px;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.brow .lg{width:30px;height:30px;object-fit:contain}
+.brow .nm{font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px;min-width:0}
+.brow .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk{height:8px;border-radius:99px;background:var(--track);overflow:hidden}
+.trk i{display:block;height:100%;background:var(--bar);border-radius:99px;transition:width .5s ease}
+.trk i.f{background:var(--accent)}
+.big{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;text-align:right}
+.mrow{display:grid;grid-template-columns:62px 1fr 74px;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.mrow .lgs{display:flex;align-items:center}
+.mrow .lgs img{width:28px;height:28px;object-fit:contain}
+.mrow .lgs img+img{margin-left:-6px}
+.mrow .nm{font-weight:700;margin-bottom:6px;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+@media(max-width:820px){.two{grid-template-columns:1fr;gap:0}}
+.cap{color:var(--mute);font-size:13px;margin:-6px 0 8px}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);text-align:left;padding:8px 6px;border-bottom:1px solid var(--ink)}
+td{padding:10px 6px;border-top:1px solid var(--line);vertical-align:middle}
+th.r,td.r{text-align:right}
+td.rank{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--faint);width:34px}
+.tcell{display:flex;align-items:center;gap:10px;min-width:0}
+.tcell img{width:26px;height:26px;object-fit:contain;flex:none}
+.tcell b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr.fin td{background:#effaf5}
+tr.fin td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.sm{font-size:11px;color:var(--mute)}
+.num{font-variant-numeric:tabular-nums}
+.notes{color:var(--mute);font-size:13px;border-top:2px solid var(--ink);padding-top:14px}
+.notes p{margin-top:6px}
+.empty{color:var(--mute);padding:14px 0;border-top:1px solid var(--line)}
+@media(max-width:560px){.hide-s{display:none}.grow{grid-template-columns:1fr 20px 1fr}.tm img{width:28px;height:28px}.tm{padding:6px}.big{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">2026 College Football</div>
+    <h1>Conference <span>Championship</span> Picture</h1>
+    <p class="sub">Pick a conference to see who is headed to the title game, the odds from ESPN FPI, and how the matchup changes as the remaining games play out.</p>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="main"></main>
+</div>
+<script>
+const pow3 = [1,3,9,27,81,243,729,2187,6561,19683,59049];
+let APP = null, LOOK = null;
+const state = {conf: null, picks: {}, sim: null, keep: false};
+
+const $ = (s, el) => (el || document).querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const T = id => APP.teams[id] || {name: String(id), logo: ""};
+const logo = (id, cls) => `<img ${cls ? `class="${cls}"` : ""} src="${esc(T(id).logo)}" alt="" onerror="this.style.visibility='hidden'">`;
+const pctText = p => p >= 0.995 ? "100%" : p < 0.005 && p > 0 ? "<1%" : Math.round(p * 100) + "%";
+
+function fmtWhen(s) {
+  if (!s) return "Time TBD";
+  const parts = s.split(" ");
+  const dt = new Date(parts[0] + "T00:00:00");
+  const day = dt.toLocaleDateString("en-US", {weekday: "short", month: "short", day: "numeric"});
+  const t = parts[1];
+  if (!t || t === "00:00") return day + " · time TBD";
+  let [h, m] = t.split(":").map(Number);
+  const ap = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return day + " · " + h + ":" + String(m).padStart(2, "0") + " " + ap + " ET";
+}
+const dayKey = s => (s || "").split(" ")[0];
+const dayLabel = s => new Date(dayKey(s) + "T00:00:00").toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric"});
+
+function gamesOf(conf) {
+  const byId = {};
+  APP.conferences[conf].games.forEach(g => byId[g.game_id] = g);
+  return LOOK[conf].games.map(id => byId[id]);
+}
+
+function decided() {
+  return state.sim || state.picks;
+}
+
+function liveStandings(conf, dec) {
+  const C = APP.conferences[conf];
+  const rows = C.standings.map(r => Object.assign({}, r));
+  const by = {};
+  rows.forEach(r => by[r.team_id] = r);
+  gamesOf(conf).forEach((g, i) => {
+    const d = dec[i];
+    if (!d) return;
+    const w = d === "h" ? g.home_id : g.away_id;
+    const l = d === "h" ? g.away_id : g.home_id;
+    by[w].conf_w++; by[w].w++; by[l].conf_l++; by[l].l++;
+  });
+  rows.forEach(r => {
+    r.cp = r.conf_w + r.conf_l ? r.conf_w / (r.conf_w + r.conf_l) : 0;
+    r.op = r.w + r.l ? r.w / (r.w + r.l) : 0;
+  });
+  rows.sort((a, b) => (b.cp - a.cp) || (b.conf_w - a.conf_w) || (b.op - a.op) || ((a.cfp_rank || 999) - (b.cfp_rank || 999)));
+  return rows;
+}
+
+function stateCode(conf, dec) {
+  let code = 0;
+  gamesOf(conf).forEach((g, i) => {
+    if (dec[i] === "h") code += pow3[i];
+    else if (dec[i] === "a") code += 2 * pow3[i];
+  });
+  return code;
+}
+
+function titleResult(conf, dec) {
+  const L = LOOK[conf];
+  const r = L.results[stateCode(conf, dec)];
+  return {ids: [r[0] >= 0 ? L.teams[r[0]] : null, r[1] >= 0 ? L.teams[r[1]] : null], flags: r[2]};
+}
+
+function computeOdds(conf, picks) {
+  const L = LOOK[conf], games = gamesOf(conf), n = games.length;
+  let base = 0;
+  const free = [];
+  for (let i = 0; i < n; i++) {
+    if (picks[i] === "h") base += pow3[i];
+    else if (picks[i] === "a") base += 2 * pow3[i];
+    else free.push(i);
+  }
+  const appear = new Array(L.teams.length).fill(0);
+  const pairs = {};
+  const m = free.length;
+  for (let mask = 0; mask < (1 << m); mask++) {
+    let code = base, p = 1;
+    for (let k = 0; k < m; k++) {
+      const i = free[k], hw = games[i].home_wp;
+      if ((mask >> k) & 1) { code += pow3[i]; p *= hw; } else { code += 2 * pow3[i]; p *= 1 - hw; }
+    }
+    const r = L.results[code];
+    if (r[0] < 0 || r[1] < 0) continue;
+    appear[r[0]] += p; appear[r[1]] += p;
+    const key = r[0] + "_" + r[1];
+    pairs[key] = (pairs[key] || 0) + p;
+  }
+  return {appear, pairs};
+}
+
+function whereText(C, s1) {
+  if (!s1) return "";
+  if (C.site === "home_stadium") return `Played at ${esc(T(s1).name)} · the higher seed hosts`;
+  if (C.site === "neutral_designation") return `Neutral site · ${esc(T(s1).name)} is the designated home team`;
+  return "Neutral site";
+}
+
+function flagTags(flags, anyLeft) {
+  const out = [];
+  if (flags & 1) out.push("Decided by tiebreaker");
+  if (flags & 2) out.push("Uses a stand-in ranking");
+  if (flags & 4) out.push("Random draw");
+  if (flags & 8) out.push("Approximate step");
+  if (flags & 16) out.push("Assumes an unplayed final game");
+  if (anyLeft) out.push("Games still to play");
+  return out.map(t => `<span class="chip">${esc(t)}</span>`).join("");
+}
+
+function renderTabs() {
+  $("#tabs").innerHTML = Object.keys(APP.conferences).map(c =>
+    `<button class="tab ${c === state.conf ? "on" : ""}" data-conf="${esc(c)}">${esc(APP.conferences[c].short)}</button>`).join("");
+}
+
+function render() {
+  const conf = state.conf, C = APP.conferences[conf];
+  const dec = decided();
+  const games = gamesOf(conf);
+  const rows = liveStandings(conf, dec);
+  const res = titleResult(conf, dec);
+  const [s1, s2] = res.ids;
+  const picksN = Object.keys(state.picks).length;
+  const mode = state.sim ? "One simulation" : picksN ? "Your picks (" + picksN + ")" : "As it stands";
+  const decN = Object.keys(dec).length;
+  const anyLeft = games.length > decN;
+  const recOf = id => { const r = rows.find(x => x.team_id === id); return r ? `${r.conf_w}-${r.conf_l} conf · ${r.w}-${r.l}` + (r.cfp_rank ? ` · CFP #${r.cfp_rank}` : "") : ""; };
+  const finalSet = new Set(res.ids.filter(Boolean));
+
+  let i = 0;
+  const idx = () => `style="--i:${i++}"`;
+  let h = "";
+
+  const side = (id, tag) => id ? `<div class="side"><div class="seedtag">${tag}</div>${logo(id)}<div class="nm">${esc(T(id).name)}</div><div class="meta">${esc(recOf(id))}</div></div>` : `<div class="side"><div class="nm">TBD</div></div>`;
+  const home = C.site === "home_stadium";
+  const left = home ? side(s2, "Seed 2 · visitor") : side(s1, "Seed 1");
+  const right = home ? side(s1, "Seed 1 · host") : side(s2, "Seed 2");
+  const es = C.espn_title_game;
+  let espnLine = "";
+  if (es) {
+    const bits = [];
+    if (es.date_et) bits.push(fmtWhen(es.date_et));
+    if (es.venue) bits.push(esc(es.venue));
+    if (es.home_id && es.away_id) bits.push(`ESPN has ${esc(T(es.away_id).name)} at ${esc(T(es.home_id).name)}`);
+    if (bits.length) espnLine = `<div class="espn">${bits.join(" · ")}</div>`;
+  }
+  h += `<section class="title-card fade" ${idx()}>
+    <div class="sec-head"><div class="label">Championship game</div><span class="chip ${state.sim || picksN ? "live" : ""}">${esc(mode)}</span></div>
+    <div class="matchup">${left}<div class="vs">${home ? "@" : "VS"}</div>${right}</div>
+    <div class="where">${whereText(C, s1)}</div>${espnLine}
+    <div class="tags">${flagTags(res.flags, anyLeft)}</div>
+  </section>`;
+
+  if (games.length) {
+    h += `<div class="controls fade" ${idx()}>
+      <button class="btn primary" id="simBtn">${state.sim ? "Simulate again" : "Simulate 1 instance"}</button>
+      <button class="btn" id="clearBtn" ${decN ? "" : "disabled"}>${state.sim ? "Back to as it stands" : "Clear picks"}</button>
+      <label class="keep"><input type="checkbox" id="keepBox" ${state.keep ? "checked" : ""}> Keep my picks when simulating</label>
+    </div>`;
+  }
+
+  h += `<section class="fade" ${idx()}><div class="sec-head"><div class="label">Remaining conference games</div><div class="sm">${games.length ? "Click a team to pick the winner" : ""}</div></div>`;
+  if (!games.length) {
+    h += `<div class="empty">Every conference game is finished, so this matchup is final.</div>`;
+  } else {
+    let lastDay = "";
+    games.map((g, gi) => [g, gi]).sort((x, y) => (x[0].date_et || "").localeCompare(y[0].date_et || "") || x[1] - y[1]).forEach(([g, gi]) => {
+      const d = dec[gi];
+      const dk = dayKey(g.date_et);
+      if (dk !== lastDay) { h += `<div class="gdate">${esc(dayLabel(g.date_et))}</div>`; lastDay = dk; }
+      const awayCls = d === "a" ? "win" : d === "h" ? "lose" : "";
+      const homeCls = d === "h" ? "win" : d === "a" ? "lose" : "";
+      const rkA = T(g.away_id) && rows.find(r => r.team_id === g.away_id);
+      const rkH = rows.find(r => r.team_id === g.home_id);
+      const cfpA = rkA && rkA.cfp_rank ? `<span class="rk">${rkA.cfp_rank}</span>` : "";
+      const cfpH = rkH && rkH.cfp_rank ? `<span class="rk">${rkH.cfp_rank}</span>` : "";
+      const ap = Math.round((1 - g.home_wp) * 100), hp = 100 - ap;
+      h += `<div class="game">
+        <div class="grow">
+          <button class="tm away ${awayCls}" data-g="${gi}" data-side="a">${logo(g.away_id)}<span class="tn">${cfpA}${esc(T(g.away_id).name)}</span></button>
+          <span class="at">${g.neutral ? "vs" : "@"}</span>
+          <button class="tm home ${homeCls}" data-g="${gi}" data-side="h">${logo(g.home_id)}<span class="tn">${cfpH}${esc(T(g.home_id).name)}</span></button>
+        </div>
+        <div class="wp"><i class="a ${d === "a" ? "f" : ""}" style="width:${ap}%"></i><i class="h ${d === "h" ? "f" : ""}" style="width:${hp}%"></i></div>
+        <div class="wplab"><span>${ap}% FPI</span><span>${esc(fmtWhen(g.date_et))}</span><span>${hp}% FPI</span></div>
+      </div>`;
+    });
+  }
+  h += `</section>`;
+
+  const odds = computeOdds(conf, state.picks);
+  const L = LOOK[conf];
+  const teamRows = L.teams.map((id, k) => ({id, p: odds.appear[k]})).filter(x => x.p > 0.0005).sort((a, b) => b.p - a.p);
+  const lab = Object.keys(state.picks).length ? "Given your picks" : "Before any picks";
+  h += `<div class="two"><section class="fade" ${idx()}>
+    <div class="sec-head"><div class="label">Chance to make the title game</div><span class="chip">${lab}</span></div>
+    <div class="cap">From ESPN FPI game probabilities across every way the remaining games can end.</div>`;
+  teamRows.slice(0, 10).forEach(x => {
+    h += `<div class="brow">${logo(x.id, "lg")}<div><div class="nm"><span>${esc(T(x.id).name)}</span></div><div class="trk"><i class="${finalSet.has(x.id) ? "f" : ""}" style="width:${Math.max(x.p * 100, 1)}%"></i></div></div><div class="big">${pctText(x.p)}</div></div>`;
+  });
+  h += `</section>`;
+
+  const pairRows = Object.keys(odds.pairs).map(k => { const [a, b] = k.split("_").map(Number); return {a: L.teams[a], b: L.teams[b], p: odds.pairs[k]}; })
+    .filter(x => x.p > 0.0005).sort((x, y) => y.p - x.p);
+  h += `<section class="fade" ${idx()}>
+    <div class="sec-head"><div class="label">Most likely matchups</div><span class="chip">${lab}</span></div>
+    <div class="cap">${home ? "The higher seed hosts." : "Seed 1 is listed first."}</div>`;
+  pairRows.slice(0, 10).forEach(x => {
+    const cur = s1 === x.a && s2 === x.b;
+    const text = home ? `${esc(T(x.b).name)} @ ${esc(T(x.a).name)}` : `${esc(T(x.a).name)} vs ${esc(T(x.b).name)}`;
+    h += `<div class="mrow"><div class="lgs">${logo(x.a)}${logo(x.b)}</div><div><div class="nm">${text}</div><div class="trk"><i class="${cur ? "f" : ""}" style="width:${Math.max(x.p * 100, 1)}%"></i></div></div><div class="big">${pctText(x.p)}</div></div>`;
+  });
+  h += `</section></div>`;
+
+  const isSB = conf === "Sun Belt Conference";
+  h += `<section class="fade" ${idx()}><div class="sec-head"><div class="label">Standings</div><span class="chip ${state.sim || picksN ? "live" : ""}">${esc(mode)}</span></div>
+    <table><thead><tr><th>#</th><th>Team</th>${isSB ? '<th class="hide-s">Div</th>' : ""}<th class="r">CFP</th><th class="r">Conf</th><th class="r">Overall</th></tr></thead><tbody>`;
+  rows.forEach((r, k) => {
+    h += `<tr class="${finalSet.has(r.team_id) ? "fin" : ""}"><td class="rank">${k + 1}</td>
+      <td><div class="tcell">${logo(r.team_id)}<b>${esc(T(r.team_id).name)}</b>${r.eligible ? "" : '<span class="sm">ineligible</span>'}</div></td>
+      ${isSB ? `<td class="hide-s sm">${esc(r.division || "")}</td>` : ""}
+      <td class="r num">${r.cfp_rank ? "#" + r.cfp_rank : '<span class="sm">–</span>'}</td>
+      <td class="r num"><b>${r.conf_w}-${r.conf_l}</b></td><td class="r num">${r.w}-${r.l}</td></tr>`;
+  });
+  h += `</tbody></table></section>`;
+
+  h += `<section class="fade" ${idx()}><div class="notes"><div class="label">About this page</div>
+    ${C.notes.map(n => `<p>${esc(n)}</p>`).join("")}
+    <p>Records include games through the last update (${esc(APP.meta.generated_et)} ET). Win probabilities are ESPN FPI. CFP ranks are from the latest committee release the page has. Picked and simulated games use placeholder scores, which only matter in rare scoring-based tiebreakers.</p></div></section>`;
+
+  $("#main").innerHTML = h;
+}
+
+function pick(gi, side) {
+  if (state.sim) { state.picks = Object.assign({}, state.sim); state.sim = null; }
+  if (state.picks[gi] === side) delete state.picks[gi];
+  else state.picks[gi] = side;
+  render();
+}
+
+function simulate() {
+  const games = gamesOf(state.conf);
+  const res = {};
+  games.forEach((g, i) => {
+    if (state.keep && state.picks[i]) res[i] = state.picks[i];
+    else res[i] = Math.random() < g.home_wp ? "h" : "a";
+  });
+  if (!state.keep) state.picks = {};
+  state.sim = res;
+  render();
+}
+
+document.addEventListener("click", e => {
+  const tab = e.target.closest(".tab");
+  if (tab) { state.conf = tab.dataset.conf; state.picks = {}; state.sim = null; renderTabs(); render(); window.scrollTo({top: 0}); return; }
+  const tm = e.target.closest(".tm");
+  if (tm) { pick(Number(tm.dataset.g), tm.dataset.side); return; }
+  if (e.target.id === "simBtn") { simulate(); return; }
+  if (e.target.id === "clearBtn") { state.picks = {}; state.sim = null; render(); return; }
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "keepBox") state.keep = e.target.checked;
+});
+
+Promise.all([
+  fetch("data/app_data.json").then(r => r.json()),
+  fetch("data/lookup.json").then(r => r.json())
+]).then(([a, l]) => {
+  APP = a; LOOK = l;
+  state.conf = Object.keys(APP.conferences)[0];
+  renderTabs();
+  render();
+}).catch(() => {
+  $("#main").innerHTML = '<section><div class="empty">The page could not load its data files. If you opened index.html straight from a folder, view it through the preview cell or from the hosted site instead.</div></section>';
+});
+</script>
+</body>
+</html>
