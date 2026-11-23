@@ -63,7 +63,7 @@ section{margin-top:40px}
 .tm.win{border-color:var(--accent);background:var(--tint)}
 .tm.lose{opacity:.42}
 .at{text-align:center;color:var(--faint);font-weight:700;font-size:13px}
-.wp{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--track);margin:8px 10px 0}
+.wp{gap:3px;display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--track);margin:8px 10px 0}
 .wp i{display:block;height:100%}
 .wp .a{background:#e6e6e6}
 .wp .h{background:var(--bar)}
@@ -304,19 +304,19 @@ function render() {
           <span class="at">${g.neutral ? "vs" : "@"}</span>
           <button class="tm home ${homeCls}" data-g="${gi}" data-side="h">${logo(g.home_id)}<span class="tn">${cfpH}${esc(T(g.home_id).name)}</span></button>
         </div>
-        <div class="wp"><i class="a ${d === "a" ? "f" : ""}" style="width:${ap}%"></i><i class="h ${d === "h" ? "f" : ""}" style="width:${hp}%"></i></div>
+        <div class="wp"><i class="a ${!d || d === "a" ? "f" : ""}" style="width:${ap}%"></i><i class="h ${!d || d === "h" ? "f" : ""}" style="width:${hp}%"></i></div>
         <div class="wplab"><span>${ap}% FPI</span><span>${esc(fmtWhen(g.date_et))}</span><span>${hp}% FPI</span></div>
       </div>`;
     });
   }
   h += `</section>`;
 
-  const odds = computeOdds(conf, state.picks);
+  const odds = computeOdds(conf, dec);
   const L = LOOK[conf];
   if (!BASE[conf]) BASE[conf] = computeOdds(conf, {});
   const bo = BASE[conf];
   const teamRows = L.teams.map((id, k) => ({id, p: odds.appear[k], b: bo.appear[k]})).filter(x => x.b > 0.0005).sort((a, b) => b.b - a.b);
-  const lab = Object.keys(state.picks).length ? "Given your picks" : "Before any picks";
+  const lab = state.sim ? "Given this simulation" : Object.keys(state.picks).length ? "Given your picks" : "Before any picks";
   h += `<div class="two"><section class="fade" ${idx()}>
     <div class="sec-head"><div class="label">Chance to make the title game</div><span class="chip">${lab}</span></div>
     <div class="cap">From ESPN FPI game probabilities across every way the remaining games can end.</div>`;
